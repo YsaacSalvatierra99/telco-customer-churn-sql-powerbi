@@ -28,13 +28,13 @@ Para comprender el comportamiento de los usuarios, a continuación se detallan l
 Durante la fase exploratoria (EDA) en SQL Server, el análisis se guió por tres premisas de negocio respaldadas por consultoras líderes en la industria:
 
 **1. ¿Cuál es la relación entre los canales de soporte técnico y la tasa de fuga?**
-> *Fundamento:* Según un caso de estudio de **Bain & Company** enfocado en telecomunicaciones europeas, los problemas operativos en el servicio al cliente son una de las principales amenazas para el crecimiento. Al optimizar los puntos de contacto como los *call centers*, la consultora logró mejorar el Net Promoter Score (NPS) en más de 30 puntos porcentuales, reduciendo significativamente el churn. Por lo tanto, en este EDA buscaremos si la falta del servicio `TechSupport` dispara los niveles de abandono.
+> *Fundamento:* Según un caso de estudio de **Bain & Company** enfocado en telecomunicaciones europeas, los problemas operativos en el servicio al cliente son una de las principales amenazas para el crecimiento. Al optimizar los puntos de contacto como los *call centers*, la consultora logró mejorar el Net Promoter Score (NPS) en más de 30 puntos porcentuales, reduciendo significativamente el churn [1]. Por lo tanto, en este EDA buscaremos si la falta del servicio `TechSupport` dispara los niveles de abandono.
 
 **2. ¿Podemos identificar umbrales críticos de consumo y antigüedad que predigan el abandono?**
-> *Fundamento:* **McKinsey & Company** señala que aplicar analítica avanzada para descubrir variables ocultas (combinando el tipo de plan, el uso de datos y el historial de soporte) permite predecir con precisión la deserción. De hecho, un enfoque basado en datos puede reducir el churn hasta en un 15%. Exploraremos la relación entre `MonthlyCharges`, `Contract` y el riesgo inminente de fuga.
+> *Fundamento:* **McKinsey & Company** señala que aplicar analítica avanzada para descubrir variables ocultas (combinando el tipo de plan, el uso de datos y el historial de soporte) permite predecir con precisión la deserción. De hecho, un enfoque basado en datos puede reducir el churn hasta en un 15% [2]. Exploraremos la relación entre `MonthlyCharges`, `Contract` y el riesgo inminente de fuga.
 
 **3. ¿Cuántos clientes de alto valor pueden agruparse en micro-segmentos para campañas de Upselling y Cross-selling?**
-> *Fundamento:* El mismo informe de **McKinsey** destaca que el verdadero valor de los datos se obtiene al dividir la base de clientes en decenas de micro-segmentos para personalizar ofertas con precisión. A su vez, **Bain** afirma que los clientes leales con buenas experiencias tienden a comprar más y quedarse más tiempo. Buscaremos clientes con alto `tenure` pero con servicios básicos para ofrecer mejoras de plan.
+> *Fundamento:* El mismo informe de **McKinsey** destaca que el verdadero valor de los datos se obtiene al dividir la base de clientes en decenas de micro-segmentos para personalizar ofertas con precisión [2]. A su vez, **Bain** afirma que los clientes leales con buenas experiencias tienden a comprar más y quedarse más tiempo [1]. Buscaremos clientes con alto `tenure` pero con servicios básicos para ofrecer mejoras de plan.
 
 ---
 
