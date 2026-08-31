@@ -1,34 +1,66 @@
 # 📉 Telco Customer Churn: Segmentación Comercial y Detección de Fuga
 
-## 📌 Objetivo del Proyecto
-El objetivo principal de este proyecto es analizar el comportamiento de los clientes de una empresa de telecomunicaciones para reducir la tasa de abandono (*Churn Rate*) y detectar oportunidades comerciales. 
+## 📌 Contexto del Proyecto y Dataset
+En la industria de las telecomunicaciones, la saturación del mercado ha provocado que la retención de clientes sea una prioridad absoluta. Este proyecto utiliza un dataset transaccional y demográfico de una empresa Telco (Telecomunicaciones) para analizar el comportamiento de los usuarios, predecir la tasa de abandono (*Churn Rate*) y descubrir oportunidades comerciales.
 
-A través de un pipeline de datos construido con **SQL Server** y visualizado en **Power BI**, busqué pasar de datos crudos a insights accionables, creando segmentos de clientes listos para ser utilizados por un equipo de ventas o retención.
+El objetivo central es utilizar análisis de datos para segmentar la base de clientes y proporcionar a los equipos de ventas y retención listados accionables ("Leads") que permitan actuar de forma proactiva antes de que el cliente decida darse de baja.
 
-## ❓ Preguntas de Negocio (EDA)
-Durante la fase exploratoria (EDA), busqué responder estas preguntas centrales para entender el problema:
-1. **¿Cuál es el perfil demográfico y de consumo de los clientes que se dan de baja vs. los que se quedan?** (Ej. Tipo de contrato, antigüedad).
-2. **¿Existe una relación directa entre el tipo de soporte técnico requerido y el riesgo de fuga?**
-3. **¿Cuántos clientes estables (alto *tenure*) representan oportunidades de Upselling o Cross-selling?**
+### 📖 Diccionario de Datos
+Para comprender el comportamiento de los usuarios, a continuación se detallan las variables principales del dataset original `telco-customer-churn.csv`:
 
-## 🛠️ Stack Tecnológico y Flujo de Trabajo
-*   **Motor de Base de Datos:** SQL Server (SSMS).
-*   **ETL & Lógica de Negocio:** Consultas T-SQL (`CASE WHEN`, CTEs, Agrupaciones) para limpiar los datos y crear la vista de segmentación.
-*   **Visualización:** Power BI (Conexión DirectQuery/Import a la vista de SQL Server para crear el dashboard interactivo).
+| Columna | Descripción |
+| :--- | :--- |
+| **customerID** | Identificador único de cada cliente. |
+| **gender** | Género del cliente. |
+| **SeniorCitizen** | `1` : Es adulto mayor, `0` : No lo es. |
+| **Partner / Dependents** | `Yes` : Tiene pareja / dependientes a cargo, `No` : No tiene. |
+| **tenure** | Antigüedad del cliente en la empresa (expresado en meses). |
+| **PhoneService / InternetService** | Tipo de servicio base contratado (Ej. DSL, Fiber optic, No). |
+| **OnlineSecurity, TechSupport, etc.** | Servicios adicionales contratados (`Yes`, `No`, `No internet service`). |
+| **Contract** | Tipo de contrato actual (`Month-to-month`, `One year`, `Two year`). |
+| **MonthlyCharges** | Cargo mensual actual que paga el cliente. |
+| **TotalCharges** | Cargos totales acumulados a lo largo de su historia con la empresa. |
+| **Churn** | Variable objetivo (`Yes` : Abandonó la empresa, `No` : Sigue activo). |
+
+---
+
+## ❓ Preguntas de Negocio (EDA) fundamentadas en el mercado
+Durante la fase exploratoria (EDA) en SQL Server, el análisis se guió por tres premisas de negocio respaldadas por consultoras líderes en la industria:
+
+**1. ¿Cuál es la relación entre los canales de soporte técnico y la tasa de fuga?**
+> *Fundamento:* Según un caso de estudio de **Bain & Company** enfocado en telecomunicaciones europeas, los problemas operativos en el servicio al cliente son una de las principales amenazas para el crecimiento. Al optimizar los puntos de contacto como los *call centers*, la consultora logró mejorar el Net Promoter Score (NPS) en más de 30 puntos porcentuales, reduciendo significativamente el churn. Por lo tanto, en este EDA buscaremos si la falta del servicio `TechSupport` dispara los niveles de abandono.
+
+**2. ¿Podemos identificar umbrales críticos de consumo y antigüedad que predigan el abandono?**
+> *Fundamento:* **McKinsey & Company** señala que aplicar analítica avanzada para descubrir variables ocultas (combinando el tipo de plan, el uso de datos y el historial de soporte) permite predecir con precisión la deserción. De hecho, un enfoque basado en datos puede reducir el churn hasta en un 15%. Exploraremos la relación entre `MonthlyCharges`, `Contract` y el riesgo inminente de fuga.
+
+**3. ¿Cuántos clientes de alto valor pueden agruparse en micro-segmentos para campañas de Upselling y Cross-selling?**
+> *Fundamento:* El mismo informe de **McKinsey** destaca que el verdadero valor de los datos se obtiene al dividir la base de clientes en decenas de micro-segmentos para personalizar ofertas con precisión. A su vez, **Bain** afirma que los clientes leales con buenas experiencias tienden a comprar más y quedarse más tiempo. Buscaremos clientes con alto `tenure` pero con servicios básicos para ofrecer mejoras de plan.
+
+---
+
+## 🛠️ Stack Tecnológico y Flujo de Trabajo (Pipeline)
+Para este proyecto, decidí separar la capa de transformación de la capa de visualización:
+*   **Motor de Base de Datos (ETL):** SQL Server (SSMS).
+*   **Lógica de Negocio:** Consultas T-SQL (`CASE WHEN`, agrupaciones y CTEs) para limpiar los datos crudos y crear una vista materializada (`vw_SegmentacionClientes`).
+*   **Visualización:** Power BI (Conexión directa a SQL Server para modelar el dashboard final).
 
 ## 📊 Segmentación Implementada
-Utilizando sentencias SQL, clasifiqué la base en tres grupos accionables:
+Utilizando sentencias SQL, clasifiqué la base en tres grupos comerciales:
 *   🔴 **Grupo 1 (Riesgo de Fuga):** Clientes con contratos mensuales, alta facturación y sin servicios de retención (ej. TechSupport). 
 *   🟡 **Grupo 2 (Oportunidad de Upselling):** Clientes leales con alto consumo pero en planes básicos.
 *   🟢 **Grupo 3 (Oportunidad de Cross-selling):** Clientes que poseen línea móvil pero no tienen contratado Internet por fibra óptica.
 
 ## 📈 Dashboard en Power BI
-*(Aquí tienes que insertar una imagen de tu dashboard. Ejemplo:)*
-![Dashboard de Power BI](images/dashboard_captura.png)
+*(Aquí insertaré la captura del tablero comercial definitivo)*
+![Dashboard Telco Churn](images/tu_imagen_aqui.png)
 
-## 💡 Conclusiones y Próximos Pasos
-*   *(Aquí pondrás 2 o 3 conclusiones reales que saques cuando termines de armar los gráficos. Por ejemplo: "Se detectó que el 70% del churn proviene de contratos mes a mes...")*
-*   El dashboard final incluye una "Base de Leads" filtrable, permitiendo al equipo comercial descargar listados específicos para ejecutar campañas telefónicas dirigidas.
+## 💡 Conclusiones
+*   *(Espacio reservado para agregar 2 o 3 insights clave descubiertos en Power BI)*
+*   *(Ejemplo: El equipo comercial ahora dispone de una "Base de Leads" filtrable en el dashboard, priorizando a los clientes del Grupo 1 para campañas de retención inmediata).*
 
 ---
-*Proyecto desarrollado por [Tu Nombre / Ysaac Salvatierra]*
+**Referencias de la industria utilizadas en el análisis:**
+* [1] Bain & Company. *"Dialing up customer experience in telecommunications"*. [Enlace al artículo](https://www.bain.com/client-results/dialing-up-customer-experience-in-telecommunications/)
+* [2] McKinsey & Company. *"Reducing churn in telecom through advanced analytics"*. [Enlace al artículo](https://www.mckinsey.com/industries/technology-media-and-telecommunications/our-insights/reducing-churn-in-telecom-through-advanced-analytics)
+
+*Proyecto desarrollado por Ysaac Salvatierra.*
