@@ -1,6 +1,6 @@
 # ⚙️ Fase 2: Transformación y Modelado Relacional (Star Schema)
 
-Para optimizar el rendimiento en Power BI y asegurar la escalabilidad del proyecto, se descartó el uso de la tabla plana original (`Telco-Customer-Churn`). En su lugar, el procesamiento se empujó a la base de datos creando un **Modelo Estrella** mediante Vistas (`VIEW`) en SQL Server.
+Para optimizar el rendimiento en Power BI y asegurar la escalabilidad del proyecto, se descartó el uso de la tabla plana original (`Telco-Customer-Churn`). En su lugar, el procesamiento de la base de datos se establecerá en un **Modelo Estrella** mediante Vistas (`VIEW`) en SQL Server.
 
 ### 📐 Arquitectura del Modelo
 Se normalizó la base de datos en una tabla de hechos central y tres dimensiones, relacionadas a través de la clave primaria `customerID`:
@@ -36,10 +36,10 @@ erDiagram
 ```
 
 ### 🧠 Ingeniería de Características (Feature Engineering)
-Se generaron nuevas columnas al vuelo dentro de la `vw_Fact_Transacciones` para inyectar valor comercial directo sin alterar los datos crudos:
+Se generaron nuevas columnas dentro de la vista creada de `vw_Fact_Transacciones` para inyectar valor comercial directo sin alterar los datos crudos:
 
-* **Segmento Comercial:** Clasificación automática mediante `CASE WHEN` (*Riesgo Fuga*, *Upselling* o *Cross-selling*) basada en los umbrales críticos detectados en el EDA.
-* **Índice de Retención (Stickiness):** Sumatoria de los servicios de valor agregado (`TechSupport`, `OnlineSecurity`, etc.) en una métrica de 0 a 4 para medir la barrera de salida de cada cliente.
+* **Segmento Comercial [`SegmentoComercial`]**: Clasificación automática mediante `CASE WHEN` (*Riesgo Fuga*, *Upselling* o *Cross-selling*) basada en los umbrales críticos detectados en el EDA.
+* **Índice de Retención / Stickiness [`TotalServiciosExtra`]**: Sumatoria de los servicios de valor agregado (`TechSupport`, `OnlineSecurity`, `DeviceProtection`, `OnlineBackup`) para obtener una métrica de 0 a 4 que permita medir la barrera de salida o nivel de anclaje de cada cliente.
 
 ---
 
@@ -76,7 +76,7 @@ SELECT
     customerID,
     tenure,
     MonthlyCharges,
-    TotalCharges,
+    TRY_CONVERT(FLOAT, NULLIF(TotalCharges, ' ')) AS TotalCharges,
     Churn,
     CASE 
         WHEN Contract = 'Month-to-month' AND MonthlyCharges > 70 THEN 'Grupo 1 (Riesgo Fuga)'
