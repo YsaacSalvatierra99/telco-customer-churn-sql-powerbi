@@ -12,26 +12,38 @@ erDiagram
     FACT_Transacciones ||--o{ DIM_Servicios : "customerID"
 
     FACT_Transacciones {
-        string customerID
+        string customerID PK
         int tenure
         float MonthlyCharges
+        float TotalCharges
+        string Churn
         string SegmentoComercial
         int TotalServiciosExtra
     }
     DIM_Cliente {
-        string customerID
+        string customerID PK
         string gender
         int SeniorCitizen
+        string Partner
+        string Dependents
     }
     DIM_Contrato {
-        string customerID
+        string customerID PK
         string Contract
+        string PaperlessBilling
         string PaymentMethod
     }
     DIM_Servicios {
-        string customerID
+        string customerID PK
+        string PhoneService
+        string MultipleLines
         string InternetService
+        string OnlineSecurity
+        string OnlineBackup
+        string DeviceProtection
         string TechSupport
+        string StreamingTV
+        string StreamingMovies
     }
 ```
 
@@ -80,8 +92,8 @@ SELECT
     Churn,
     CASE 
         WHEN Contract = 'Month-to-month' AND MonthlyCharges > 70 THEN 'Grupo 1 (Riesgo Fuga)'
-        WHEN InternetService = 'DSL' AND tenure > 24 THEN 'Grupo 2 (Upselling)'
-        WHEN PhoneService = 'Yes' AND InternetService = 'No' AND tenure > 12 THEN 'Grupo 3 (Cross-selling)'
+        WHEN Churn = 'No' AND InternetService = 'DSL' AND tenure > 24 THEN 'Grupo 2 (Upselling)'
+        WHEN Churn = 'No' AND PhoneService = 'Yes' AND InternetService = 'No' AND tenure > 12 THEN 'Grupo 3 (Cross-selling)'
         ELSE 'Estable / Sin clasificar'
     END AS SegmentoComercial,
     (CASE WHEN OnlineSecurity = 'Yes' THEN 1 ELSE 0 END +
