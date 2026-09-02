@@ -66,7 +66,7 @@ GROUP BY
         WHEN MonthlyCharges BETWEEN 35 AND 70 THEN 'Medio ($35-$70)'
         ELSE 'Alto (>$70)'
     END
-ORDER BY Contract DESC, TasaChurn_Pct DESC;
+ORDER BY TasaChurn_Pct DESC;
 ```
 
 </details>
