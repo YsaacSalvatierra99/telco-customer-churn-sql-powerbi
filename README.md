@@ -25,17 +25,19 @@ Para comprender el comportamiento de los usuarios, a continuación se detallan l
 ---
 
 ## ❓ Preguntas de Negocio (EDA) fundamentadas en el mercado
-Durante la fase exploratoria (EDA) en SQL Server, el análisis se guió por tres premisas de negocio respaldadas por consultoras líderes en la industria:
+Durante la fase exploratoria (EDA) en SQL Server, el análisis se guió por premisas de negocio respaldadas por consultoras líderes en la industria:
 
 **1. ¿Cuál es la relación entre los canales de soporte técnico y la tasa de fuga?**
-> *Fundamento:* Según un caso de estudio de **Bain & Company** enfocado en telecomunicaciones europeas, los problemas operativos en el servicio al cliente son una de las principales amenazas para el crecimiento. Al optimizar los puntos de contacto como los *call centers*, la consultora logró mejorar el Net Promoter Score (NPS) en más de 30 puntos porcentuales, reduciendo significativamente el churn [1]. Por lo tanto, en este EDA buscaremos si la falta del servicio `TechSupport` dispara los niveles de abandono.
+> *Fundamento:* Según un caso de estudio de **Bain & Company** enfocado en telecomunicaciones europeas, los problemas operativos en el servicio al cliente son una de las principales amenazas para el crecimiento. Al optimizar los puntos de contacto como los *call centers*, la consultora logró mejorar el Net Promoter Score (NPS) en más de 30 puntos porcentuales, reduciendo significativamente el churn [1]. Por lo tanto, en este EDA evaluamos si la falta del servicio `TechSupport` dispara los niveles de abandono.
 
-**2. ¿Podemos identificar umbrales críticos de consumo y antigüedad que predigan el abandono?**
-> *Fundamento:* **McKinsey & Company** señala que aplicar analítica avanzada para descubrir variables ocultas (combinando el tipo de plan, el uso de datos y el historial de soporte) permite predecir con precisión la deserción. De hecho, un enfoque basado en datos puede reducir el churn hasta en un 15% [2]. Exploraremos la relación entre `MonthlyCharges`, `Contract` y el riesgo inminente de fuga.
+**2. ¿Qué impacto tienen los umbrales críticos de consumo (`MonthlyCharges`) según la modalidad contractual?**
+> *Fundamento:* **McKinsey & Company** señala que los modelos de deserción basados en analítica avanzada revelan interacciones clave entre la sensibilidad al precio y las condiciones del servicio, permitiendo reducir la tasa de abandono hasta en un 15% [2]. Analizamos la elasticidad de fuga cuando la tarifa supera los $70/mes en contratos sin permanencia (`Month-to-month`) frente a esquemas de largo plazo.
 
-**3. ¿Cuántos clientes de alto valor pueden agruparse en micro-segmentos para campañas de Upselling y Cross-selling?**
-> *Fundamento:* El mismo informe de **McKinsey** destaca que el verdadero valor de los datos se obtiene al dividir la base de clientes en decenas de micro-segmentos para personalizar ofertas con precisión [2]. A su vez, **Bain** afirma que los clientes leales con buenas experiencias tienden a comprar más y quedarse más tiempo [1]. Buscaremos clientes con alto `tenure` pero con servicios básicos para ofrecer mejoras de plan.
+**3. ¿Existe una ventana temporal crítica de antigüedad (`tenure`) para el abandono temprano (*Early Churn*)?**
+> *Fundamento:* La literatura operativa de **Bain & Company** e informes de retención sectorial destacan que la experiencia inicial de inducción (*onboarding*) define el ciclo de vida del cliente: las fricciones en los primeros ciclos de facturación concentran la mayor tasa de deserción [1]. Analizamos el comportamiento de bajas en tramos tempranos (0 a 6 meses).
 
+**4. ¿Cuántos clientes de alto valor pueden agruparse en micro-segmentos para campañas de Upselling y Cross-selling?**
+> *Fundamento:* El mismo informe de **McKinsey** destaca que el verdadero valor de los datos se obtiene al dividir la base de clientes en micro-segmentos para personalizar ofertas con precisión [2]. A su vez, **Bain** afirma que los clientes leales con buenas experiencias tienden a comprar más y quedarse más tiempo [1]. Buscamos clientes con alto `tenure` pero con servicios básicos para ofrecer mejoras de plan.
 ---
 
 ## 🛠️ Stack Tecnológico y Flujo de Trabajo (Pipeline)
