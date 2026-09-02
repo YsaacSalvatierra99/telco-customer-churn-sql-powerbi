@@ -38,27 +38,28 @@ Durante la fase exploratoria (EDA) en SQL Server, el análisis se guió por prem
 
 **4. ¿Cuántos clientes de alto valor pueden agruparse en micro-segmentos para campañas de Upselling y Cross-selling?**
 > *Fundamento:* El mismo informe de **McKinsey** destaca que el verdadero valor de los datos se obtiene al dividir la base de clientes en micro-segmentos para personalizar ofertas con precisión [2]. A su vez, **Bain** afirma que los clientes leales con buenas experiencias tienden a comprar más y quedarse más tiempo [1]. Buscamos clientes con alto `tenure` pero con servicios básicos para ofrecer mejoras de plan.
+
 ---
 
 ## 🛠️ Stack Tecnológico y Flujo de Trabajo (Pipeline)
-Para este proyecto, decidí separar la capa de transformación de la capa de visualización:
-*   **Motor de Base de Datos (ETL):** SQL Server (SSMS).
-*   **Lógica de Negocio:** Consultas T-SQL (`CASE WHEN`, agrupaciones y CTEs) para limpiar los datos crudos y crear una vista materializada (`vw_SegmentacionClientes`).
-*   **Visualización:** Power BI (Conexión directa a SQL Server para modelar el dashboard final).
+Para este proyecto, se desacopló la capa de extracción y modelado relacional de la capa visual:
+* **Motor de Base de Datos (ETL):** SQL Server (SSMS).
+* **Lógica de Negocio y Modelado:** Consultas T-SQL para normalizar el dataset plano en un **Modelo Estrella** mediante cuatro Vistas (`vw_Dim_Cliente`, `vw_Dim_Servicios`, `vw_Dim_Contrato` y `vw_Fact_Transacciones`), integrando *Feature Engineering* para clasificar leads.
+* **Visualización:** Power BI (Conexión directa a SQL Server para consumir el esquema relacional).
 
 ## 📊 Segmentación Implementada
-Utilizando sentencias SQL, clasifiqué la base en tres grupos comerciales:
-*   🔴 **Grupo 1 (Riesgo de Fuga):** Clientes con contratos mensuales, alta facturación y sin servicios de retención (ej. TechSupport). 
-*   🟡 **Grupo 2 (Oportunidad de Upselling):** Clientes leales con alto consumo pero en planes básicos.
-*   🟢 **Grupo 3 (Oportunidad de Cross-selling):** Clientes que poseen línea móvil pero no tienen contratado Internet por fibra óptica.
+En la tabla de hechos (`vw_Fact_Transacciones`), se clasificó a la base en tres cohortes comerciales accionables mediante sentencias `CASE WHEN`:
+* 🔴 **Grupo 1 (Riesgo de Fuga):** Clientes con contratos mensuales de alta facturación (`MonthlyCharges > $70`), donde la tasa de abandono supera el 52%.
+* 🟡 **Grupo 2 (Oportunidad de Upselling):** Clientes fidelizados (`tenure > 24 meses`) con tecnología básica DSL, ideales para migración a Fibra Óptica.
+* 🟢 **Grupo 3 (Oportunidad de Cross-selling):** Clientes activos de telefonía (`tenure > 12 meses`) que no tienen ningún servicio de Internet contratado (`InternetService = 'No'`).
 
 ## 📈 Dashboard en Power BI
 *(Aquí insertaré la captura del tablero comercial definitivo)*
 ![Dashboard Telco Churn](images/tu_imagen_aqui.png)
 
 ## 💡 Conclusiones
-*   *(Espacio reservado para agregar 2 o 3 insights clave descubiertos en Power BI)*
-*   *(Ejemplo: El equipo comercial ahora dispone de una "Base de Leads" filtrable en el dashboard, priorizando a los clientes del Grupo 1 para campañas de retención inmediata).*
+* *(Espacio reservado para agregar 2 o 3 insights clave descubiertos en Power BI)*
+* *(Ejemplo: El equipo comercial ahora dispone de una "Base de Leads" filtrable en el dashboard, priorizando a los clientes del Grupo 1 para campañas de retención inmediata).*
 
 ---
 **Referencias de la industria utilizadas en el análisis:**
