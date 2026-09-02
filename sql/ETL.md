@@ -75,13 +75,13 @@ GO
 
 -- 4. CREACIÓN DE LA TABLA DE HECHOS (Con Feature Engineering)
 CREATE VIEW vw_Fact_Transacciones AS
-SELECT 
+SELECT     
     customerID,
     tenure,
     MonthlyCharges,
-    TotalCharges,
+    TRY_CONVERT(FLOAT, NULLIF(TotalCharges, ' ')) AS TotalCharges,
     Churn,
-    CASE 
+    CASE     
         WHEN Contract = 'Month-to-month' AND MonthlyCharges > 70 THEN 'Grupo 1 (Riesgo Fuga)'
         WHEN InternetService = 'DSL' AND tenure > 24 THEN 'Grupo 2 (Upselling)'
         WHEN PhoneService = 'Yes' AND InternetService = 'No' AND tenure > 12 THEN 'Grupo 3 (Cross-selling)'
