@@ -4,37 +4,60 @@ Este documento consolida la fase de exploración analítica realizada sobre la b
 
 ---
 
-## 1. Impacto del Soporte Técnico en la Retención de Clientes
+## 1. Evaluación de Servicios de Valor Agregado como Anclas de Retención
 
 ### ❓ Pregunta de Negocio
-¿Existe una relación directa entre no contar con soporte técnico (`TechSupport`) y el incremento en el riesgo de fuga de los clientes?
+**¿Qué impacto tiene la ausencia de asistencia técnica frente a la deserción, considerando este servicio como el principal indicador de atención al usuario?**
+
+> *Fundamento:* El planteamiento sobre las posibles razones de fuga se construyó bajo el argumento de **Bain & Company**, cuyo caso de estudio en telecomunicaciones destaca que una mejora en los puntos de contacto y el servicio al cliente es vital para reducir el churn. Dado que el dataset no cuenta con métricas directas para medir la conformidad sobre la atención al cliente o los call centers, planteamos investigar el servicio de `TechSupport` como una variable *proxy* (representante) de la experiencia del usuario con la compañía. Esta variable nos permite medir indirectamente la capacidad de resolución operativa frente a fallas. De esta manera, cruzamos la teoría con la hipótesis de que el Soporte Técnico representa tanto la estabilidad de los servicios como la calidad de atención, justificando su evaluación comparativa frente a otros servicios en nuestro análisis exploratorio.
 
 <details>
-<summary>👉 Ver consulta T-SQL</summary>
-
+<summary>👉 Ver consulta T-SQL (Evaluación Comparativa)</summary>
+    
 ```sql
--- Analisis de tasa de fuga segun contratacion de Soporte Tecnico
+-- Evaluacion cruzada de ausencia de servicios y su impacto en el Churn
 SELECT 
-    TechSupport,
+    'Sin TechSupport' AS ServicioFaltante,
     COUNT(*) AS TotalClientes,
-    SUM(CASE WHEN Churn = 'Yes' THEN 1 ELSE 0 END) AS ClientesFugados,
-    CAST(ROUND(SUM(CASE WHEN Churn = 'Yes' THEN 1.0 ELSE 0.0 END) / COUNT(*) * 100, 2) AS DECIMAL(5,2)) AS TasaChurn_Pct
-FROM [Telco-Customer-Churn]
-GROUP BY TechSupport
-ORDER BY TasaChurn_Pct DESC;
+    SUM(CASE WHEN Churn = 'Yes' THEN 1 ELSE 0 END) AS Bajas,
+    CAST(ROUND(SUM(CASE WHEN Churn = 'Yes' THEN 1.0 ELSE 0.0 END) / COUNT(*) * 100, 2) AS DECIMAL(5,2)) AS TasaFuga_Pct
+FROM [Telco-Customer-Churn] WHERE TechSupport = 'No'
+
+UNION ALL
+
+SELECT 
+    'Sin OnlineSecurity', COUNT(*), SUM(CASE WHEN Churn = 'Yes' THEN 1 ELSE 0 END),
+    CAST(ROUND(SUM(CASE WHEN Churn = 'Yes' THEN 1.0 ELSE 0.0 END) / COUNT(*) * 100, 2) AS DECIMAL(5,2))
+FROM [Telco-Customer-Churn] WHERE OnlineSecurity = 'No'
+
+UNION ALL
+
+SELECT 
+    'Sin DeviceProtection', COUNT(*), SUM(CASE WHEN Churn = 'Yes' THEN 1 ELSE 0 END),
+    CAST(ROUND(SUM(CASE WHEN Churn = 'Yes' THEN 1.0 ELSE 0.0 END) / COUNT(*) * 100, 2) AS DECIMAL(5,2))
+FROM [Telco-Customer-Churn] WHERE DeviceProtection = 'No'
+
+UNION ALL
+
+SELECT 
+    'Sin OnlineBackup', COUNT(*), SUM(CASE WHEN Churn = 'Yes' THEN 1 ELSE 0 END),
+    CAST(ROUND(SUM(CASE WHEN Churn = 'Yes' THEN 1.0 ELSE 0.0 END) / COUNT(*) * 100, 2) AS DECIMAL(5,2))
+FROM [Telco-Customer-Churn] WHERE OnlineBackup = 'No'
+ORDER BY TasaFuga_Pct DESC;
 ```
 
 </details>
 
 ### 📊 Resultados Obtenidos
-| TechSupport | TotalClientes | ClientesFugados | TasaChurn_Pct (%) |
+| ServicioFaltante | TotalClientes | Bajas | TasaFuga_Pct (%) |
 | :--- | :--- | :--- | :--- |
-| **No** | 3473 | 1446 | **41.64%** |
-| **Yes** | 2044 | 310 | **15.17%** |
-| **No internet service** | 1526 | 113 | **7.40%** |
+| **Sin OnlineSecurity** | 3498 | 1461 | **41.77%** |
+| **Sin TechSupport** | 3473 | 1446 | **41.64%** |
+| **Sin OnlineBackup** | 3088 | 1233 | **39.93%** |
+| **Sin DeviceProtection** | 3095 | 1211 | **39.13%** |
 
 ### 💡 Insight de Negocio
-Los clientes que tienen servicio de internet activo pero **carecen de soporte técnico** registran una tasa de fuga del **41.64%**, casi tres veces superior a la de aquellos que cuentan con el servicio contratado (**15.17%**). Esto valida la premisa operativa de Bain & Company: el soporte postventa actúa como una de las principales anclas de retención. Bonificar o incluir asistencia técnica durante los primeros meses reduciría drásticamente el volumen de bajas en este grupo.
+El análisis de los datos confirma nuestra hipótesis inicial: la falta de soporte técnico (`TechSupport`) dispara la tasa de fuga a casi el 42%, empatando técnicamente con la ausencia de seguridad online como los mayores predictores de deserción en servicios adicionales. Sin embargo, al cruzar estos resultados con el marco teórico, el Soporte Técnico se valida como la variable crítica y accionable principal. Mientras que la seguridad web es un servicio pasivo, el `TechSupport` es el punto de contacto humano que define la experiencia y contención del cliente ante una falla en la red. Bonificar o incluir asistencia técnica durante el *onboarding* actúa directamente sobre el problema operativo, amortiguando la frustración del usuario y reduciendo el volumen de bajas en este grupo.
 
 ---
 
