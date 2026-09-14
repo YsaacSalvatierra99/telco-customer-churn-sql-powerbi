@@ -54,12 +54,24 @@ En la tabla de hechos (`vw_Fact_Transacciones`), se clasificó a la base en tres
 * 🟢 **Grupo 3 (Oportunidad de Cross-selling):** Clientes activos de telefonía (`tenure > 12 meses`) que no tienen ningún servicio de Internet contratado (`InternetService = 'No'`).
 
 ## 📈 Dashboard en Power BI
-*(Aquí insertaré la captura del tablero comercial definitivo)*
-![Dashboard Telco Churn](images/tu_imagen_aqui.png)
+A continuación, se presentan las vistas principales del tablero interactivo desarrollado para el análisis:
+
+**1. Contexto General**
+![Contexto](images/TelcoDB_pages-to-jpg-0002.jpg)
+
+**2. Diagnóstico de Fuga**
+![Diagnóstico](images/TelcoDB_pages-to-jpg-0003.jpg)
+
+**3. Plan de Acción Estratégico**
+![Plan de Acción](images/TelcoDB_pages-to-jpg-0004.jpg)
 
 ## 💡 Conclusiones
-* *(Espacio reservado para agregar 2 o 3 insights clave descubiertos en Power BI)*
-* *(Ejemplo: El equipo comercial ahora dispone de una "Base de Leads" filtrable en el dashboard, priorizando a los clientes del Grupo 1 para campañas de retención inmediata).*
+
+* **Matriz de Acción Inmediata:** Se identificaron 2.097 clientes en riesgo crítico de fuga (contratos mensuales con tarifas > $70). La principal fricción detectada es la falta de soporte técnico, por lo que se recomienda bonificar el servicio de TechSupport durante los primeros 6 meses (onboarding) para amortiguar el churn temprano.
+
+* **Oportunidades de Upselling:** El modelo detectó una cohorte fidelizada de 1.242 clientes con más de dos años de antigüedad que continúan utilizando tecnología DSL. Representan el segmento con mayor probabilidad de aceptación para campañas de migración a Fibra Óptica, lo que permitiría incrementar el ARPU sin fricción de adquisición.
+
+* **Expansión de la Cartera (Cross-selling):** Existen 992 usuarios estables que únicamente poseen telefonía fija/móvil desde hace más de un año. Se propone desplegar la venta cruzada de paquetes de internet enfocado en Online Security y Online Backup, aprovechando su histórico de lealtad.
 
 ---
 **Referencias de la industria utilizadas en el análisis:**
